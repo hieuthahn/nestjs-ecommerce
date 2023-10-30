@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext } from "@nestjs/common";
 
 export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
@@ -6,6 +6,6 @@ export class AdminGuard implements CanActivate {
 
     if (!request.session.user) return false;
 
-    return request.session.user.isAdmin;
+    return request.session.user.roles.includes("admin");
   }
 }

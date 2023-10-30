@@ -6,21 +6,21 @@ import {
   Put,
   Session,
   UseGuards,
-} from '@nestjs/common';
-import { CurrentUser } from 'src/decorators/current-user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { LocalAuthGuard } from 'src/guards/local-auth.guard';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
-import { ProfileDto } from '../dtos/profile.dto';
-import { RegisterDto } from '../dtos/register.dto';
-import { UserDto } from '../dtos/user.dto';
-import { UserDocument } from '../schemas/user.schema';
-import { AuthService } from '../services/auth.service';
-import { UsersService } from '../services/users.service';
+} from "@nestjs/common";
+import { CurrentUser } from "src/decorators/current-user.decorator";
+import { AuthGuard } from "src/guards/auth.guard";
+import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { LocalAuthGuard } from "src/guards/local-auth.guard";
+import { Serialize } from "src/interceptors/serialize.interceptor";
+import { ProfileDto } from "../dtos/profile.dto";
+import { RegisterDto } from "../dtos/register.dto";
+import { UserDto } from "../dtos/user.dto";
+import { UserDocument } from "../schemas/user.schema";
+import { AuthService } from "../services/auth.service";
+import { UsersService } from "../services/users.service";
 
 @Serialize(UserDto)
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(
     private authService: AuthService,
@@ -28,13 +28,22 @@ export class AuthController {
   ) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post("login")
   async login(@CurrentUser() user: UserDocument, @Session() session: any) {
-    const { name, _id, email, isAdmin } = user;
+    const { fullName, _id, email, roles, address, shippingAddress, phone } =
+      user;
+    const { accessToken } = await this.authService.login(user.email, user._id);
 
-    const { accessToken } = await this.authService.login(name, _id);
-
-    const loggedUser = { name, _id, isAdmin, email, accessToken };
+    const loggedUser = {
+      fullName,
+      _id,
+      email,
+      roles,
+      address,
+      shippingAddress,
+      phone,
+      accessToken,
+    };
 
     session.user = loggedUser;
 
@@ -42,31 +51,31 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get("profile")
   getProfile(@Session() session: any) {
     return session.user;
   }
 
-  @Post('logout')
+  @Post("logout")
   async logout(@Session() session: any) {
     session.user = null;
   }
 
-  @Post('register')
+  @Post("register")
   async register(
-    @Body() { name, email, password }: RegisterDto,
+    @Body() { fullName, email, password }: RegisterDto,
     @Session() session: any
   ) {
-    const user = await this.authService.register(name, email, password);
+    const user = await this.authService.register({ fullName, email, password });
 
-    const { _id, isAdmin } = user;
+    const { _id, roles } = user;
 
-    const { accessToken } = await this.authService.login(name, user._id);
+    const { accessToken } = await this.authService.login(fullName, user._id);
 
     const loggedUser = {
-      name: user.name,
+      fullName: user.fullName,
       _id,
-      isAdmin,
+      roles,
       email: user.email,
       accessToken,
     };
@@ -77,16 +86,16 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
-  @Put('profile')
+  @Put("profile")
   async updateUser(@Body() credentials: ProfileDto, @Session() session: any) {
     const user = await this.usersService.update(session.user._id, credentials);
 
-    const { name, _id, email, isAdmin } = user;
+    const { fullName, _id, email, roles } = user;
 
     const updatedUser = {
-      name,
+      fullName,
       _id,
-      isAdmin,
+      roles,
       email,
       accessToken: session.user.accessToken,
     };

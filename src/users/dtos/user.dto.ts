@@ -1,20 +1,30 @@
-import { Expose, Transform } from 'class-transformer';
-import { ObjectId } from 'mongoose';
+import { Expose, Transform } from "class-transformer";
+import { IsOptional } from "class-validator";
+import { ObjectId } from "mongoose";
 
 export class UserDto {
-  @Expose()
-  email: string;
+    @Expose()
+    email: string;
 
-  @Expose()
-  @Transform(({ key, obj }) => obj[key])
-  _id: ObjectId;
+    @Expose()
+    @Transform(({ key, obj }) => obj[key])
+    _id: ObjectId;
 
-  @Expose()
-  name: string;
+    @Expose()
+    fullName: string;
 
-  @Expose()
-  isAdmin: boolean;
+    @Expose()
+    roles: string[];
 
-  @Expose()
-  accessToken?: string;
+    @Expose()
+    address: string;
+
+    @Expose()
+    shippingAddress: string;
+
+    @Expose()
+    phone: string;
+
+    @Expose()
+    accessToken?: string;
 }

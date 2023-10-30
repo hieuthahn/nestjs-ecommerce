@@ -2,13 +2,13 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { PaginatedProducts } from 'src/interfaces';
-import { UserDocument } from 'src/users/schemas/user.schema';
-import { sampleProduct } from '../../utils/data/product';
-import { Product, ProductDocument } from '../schemas/product.schema';
+} from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model, Types } from "mongoose";
+import { PaginatedProducts } from "src/interfaces";
+import { UserDocument } from "src/users/schemas/user.schema";
+import { sampleProduct } from "../../utils/data/product";
+import { Product, ProductDocument } from "../schemas/product.schema";
 
 @Injectable()
 export class ProductsService {
@@ -22,7 +22,7 @@ export class ProductsService {
       .sort({ rating: -1 })
       .limit(3);
 
-    if (!products.length) throw new NotFoundException('No products found.');
+    if (!products.length) throw new NotFoundException("No products found.");
 
     return products;
   }
@@ -34,7 +34,9 @@ export class ProductsService {
     const pageSize = 2;
     const page = parseInt(pageId) || 1;
 
-    const rgex = keyword ? { name: { $regex: keyword, $options: 'i' } } : {};
+    const rgex = keyword
+      ? { fullName: { $regex: keyword, $options: "i" } }
+      : {};
 
     const count = await this.productModel.countDocuments({ ...rgex });
     const products = await this.productModel
@@ -42,18 +44,18 @@ export class ProductsService {
       .limit(pageSize)
       .skip(pageSize * (page - 1));
 
-    if (!products.length) throw new NotFoundException('No products found.');
+    if (!products.length) throw new NotFoundException("No products found.");
 
     return { products, page, pages: Math.ceil(count / pageSize) };
   }
 
   async findById(id: string): Promise<ProductDocument> {
     if (!Types.ObjectId.isValid(id))
-      throw new BadRequestException('Invalid product ID.');
+      throw new BadRequestException("Invalid product ID.");
 
     const product = await this.productModel.findById(id);
 
-    if (!product) throw new NotFoundException('No product with given ID.');
+    if (!product) throw new NotFoundException("No product with given ID.");
 
     return product;
   }
@@ -66,8 +68,8 @@ export class ProductsService {
     return createdProducts;
   }
 
-  async createSample(): Promise<ProductDocument> {
-    const createdProduct = await this.productModel.create(sampleProduct);
+  async create(product: Partial<ProductDocument>): Promise<ProductDocument> {
+    const createdProduct = await this.productModel.create(product);
 
     return createdProduct;
   }
@@ -80,11 +82,11 @@ export class ProductsService {
       attrs;
 
     if (!Types.ObjectId.isValid(id))
-      throw new BadRequestException('Invalid product ID.');
+      throw new BadRequestException("Invalid product ID.");
 
     const product = await this.productModel.findById(id);
 
-    if (!product) throw new NotFoundException('No product with given ID.');
+    if (!product) throw new NotFoundException("No product with given ID.");
 
     product.name = name;
     product.price = price;
@@ -106,21 +108,21 @@ export class ProductsService {
     comment: string
   ): Promise<ProductDocument> {
     if (!Types.ObjectId.isValid(id))
-      throw new BadRequestException('Invalid product ID.');
+      throw new BadRequestException("Invalid product ID.");
 
     const product = await this.productModel.findById(id);
 
-    if (!product) throw new NotFoundException('No product with given ID.');
+    if (!product) throw new NotFoundException("No product with given ID.");
 
     const alreadyReviewed = product.reviews.find(
-      r => r.user.toString() === user._id.toString()
+      (r) => r.user.toString() === user._id.toString()
     );
 
     if (alreadyReviewed)
-      throw new BadRequestException('Product already reviewed!');
+      throw new BadRequestException("Product already reviewed!");
 
     const review = {
-      name: user.name,
+      name: user.fullName,
       rating,
       comment,
       user: user._id,
@@ -141,11 +143,11 @@ export class ProductsService {
 
   async deleteOne(id: string): Promise<void> {
     if (!Types.ObjectId.isValid(id))
-      throw new BadRequestException('Invalid product ID.');
+      throw new BadRequestException("Invalid product ID.");
 
     const product = await this.productModel.findById(id);
 
-    if (!product) throw new NotFoundException('No product with given ID.');
+    if (!product) throw new NotFoundException("No product with given ID.");
 
     await product.remove();
   }

@@ -16,7 +16,6 @@ export const connectDB = (
   const name = dbName ? `/${dbName}?retryWrites=true&w=majority` : "";
 
   const mongodbUri = `mongodb://${auth}${dbHost}:${dbPort}${name}`;
-  console.log(mongodbUri);
   return {
     uri: mongodbUri,
     autoIndex: false,

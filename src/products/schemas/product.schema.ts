@@ -1,6 +1,6 @@
-import * as mongoose from 'mongoose';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { User } from '../../users/schemas/user.schema';
+import * as mongoose from "mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { User } from "../../users/schemas/user.schema";
 
 export type ProductDocument = Product & mongoose.Document;
 
@@ -9,7 +9,7 @@ export class Review {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'User',
+    ref: "User",
     default: null,
   })
   user: User;
@@ -22,6 +22,17 @@ export class Review {
 
   @Prop({ required: true })
   comment: string;
+}
+
+export class Attribute {
+  @Prop({ required: true })
+  key: string;
+
+  @Prop({ required: true })
+  value: number;
+
+  @Prop({ required: false })
+  slug?: string;
 }
 
 @Schema({ timestamps: true })

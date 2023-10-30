@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from "bcryptjs";
 
 export const encryptPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(10);
@@ -10,8 +10,13 @@ export const encryptPassword = async (password: string) => {
 
 export const imageFileFilter = (req: any, file: any, cb: any) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-    return cb(new Error('Only images files allowed!'), false);
+    return cb(new Error("Only images files allowed!"), false);
   }
 
   cb(null, true);
+};
+
+export const removeKeys = (keys: string[], object: object) => {
+  keys.forEach((key: string) => delete object[key]);
+  return object;
 };

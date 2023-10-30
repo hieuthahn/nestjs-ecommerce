@@ -5,20 +5,32 @@ import {
   MaxLength,
   IsOptional,
   IsBoolean,
-} from 'class-validator';
+  IsPhoneNumber,
+  IsArray,
+} from "class-validator";
 
 export class AdminProfileDto {
   @IsString()
-  @MinLength(4, { message: 'Username is too short.' })
-  @MaxLength(20, { message: 'Username is too long.' })
+  @MinLength(4, { message: "Full name is too short." })
+  @MaxLength(20, { message: "Full name is too long." })
   @IsOptional()
-  name?: string;
+  fullName?: string;
 
-  @IsEmail({}, { message: 'Email address is not valid.' })
+  @IsEmail({}, { message: "Email address is not valid." })
   @IsOptional()
   email?: string;
 
-  @IsBoolean()
+  @IsPhoneNumber("VN", { message: "Phone number is not valid." })
   @IsOptional()
-  isAdmin?: boolean;
+  phone?: string;
+
+  @IsArray()
+  @IsOptional()
+  roles?: string[];
+
+  @IsOptional()
+  address?: string;
+
+  @IsOptional()
+  shippingAddress?: string;
 }

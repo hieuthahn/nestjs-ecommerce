@@ -2,11 +2,12 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
-import * as bcrypt from 'bcryptjs';
-import { JwtService } from '@nestjs/jwt';
-import { encryptPassword } from 'src/utils';
+} from "@nestjs/common";
+import { UsersService } from "./users.service";
+import * as bcrypt from "bcryptjs";
+import { JwtService } from "@nestjs/jwt";
+import { encryptPassword } from "src/utils";
+import { UserDocument } from "../schemas/user.schema";
 
 @Injectable()
 export class AuthService {
@@ -18,12 +19,12 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findOne(email);
 
-    if (!user) throw new NotFoundException('Invalid email or password');
+    if (!user) throw new NotFoundException("Invalid email or password");
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword)
-      throw new BadRequestException('Invalid email or password');
+      throw new BadRequestException("Invalid email or password");
 
     return user;
   }
@@ -36,18 +37,15 @@ export class AuthService {
     };
   }
 
-  async register(name: string, email: string, password: string) {
-    const existingUser = await this.usersService.findOne(email);
+  async register(data: Partial<UserDocument>) {
+    const existingUser = await this.usersService.findOne(data.email);
 
-    if (existingUser) throw new BadRequestException('Email is already in use.');
+    if (existingUser) throw new BadRequestException("Email is already in use.");
 
-    const encryptedPassword = await encryptPassword(password);
-
+    const encryptedPassword = await encryptPassword(data.password);
     const user = await this.usersService.create({
-      email,
+      ...data,
       password: encryptedPassword,
-      isAdmin: false,
-      name,
     });
 
     return user;
