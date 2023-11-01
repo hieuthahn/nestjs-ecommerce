@@ -1,24 +1,65 @@
-import { IsString, IsNumber } from 'class-validator';
+import {
+    IsString,
+    IsNumber,
+    IsArray,
+    IsOptional,
+    IsMongoId,
+    ValidateNested,
+    ArrayNotEmpty,
+    IsNotEmpty,
+    IsNotEmptyObject,
+    IsBoolean,
+    IsEnum,
+} from "class-validator";
+import { ObjectId } from "mongodb";
+import { Attribute, ExternalLink, Image } from "../schemas/product.schema";
+import { Type } from "class-transformer";
 
 export class ProductDto {
-  @IsString()
-  name: string;
+    @IsString()
+    name: string;
 
-  @IsNumber()
-  price: number;
+    @IsNumber()
+    price: string;
 
-  @IsString()
-  description: string;
+    @IsString()
+    @IsOptional()
+    shortDescription: string;
 
-  @IsString()
-  image: string;
+    @IsString()
+    @IsOptional()
+    longDescription: string;
 
-  @IsString()
-  brand: string;
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => Image)
+    images: Image[];
 
-  @IsString()
-  category: string;
+    @IsString()
+    @IsOptional()
+    brand: string;
 
-  @IsNumber()
-  countInStock: number;
+    @IsMongoId()
+    category: ObjectId;
+
+    @IsBoolean()
+    @IsOptional()
+    isContactPrice: boolean;
+
+    @IsNumber()
+    stock: number;
+
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ExternalLink)
+    externalLinks: ExternalLink[];
+
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => Attribute)
+    attributes: Attribute[];
+
+    @IsArray()
+    @IsOptional()
+    tags: string[];
 }

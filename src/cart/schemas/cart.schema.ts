@@ -1,22 +1,21 @@
-import { CartItem, ShippingDetails } from 'src/interfaces';
+import { CartItem, ShippingDetails } from "src/interfaces";
 
 export interface CartInterface {
-  cartItems: CartItem[];
-  shippingDetails: ShippingDetails;
-  paymentMethod: string;
+    cartItems: CartItem[];
+    shippingDetails: ShippingDetails;
+    paymentMethod: string;
 }
 
 export const defaultCart = {
-  cartItems: [],
-  shippingDetails: {
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
-  },
-  paymentMethod: 'PayPal',
+    cartItems: [],
+    shippingDetails: {
+        address: "",
+        city: "",
+        note: "",
+    },
+    paymentMethod: "banking",
 };
 
 export class Cart {
-  constructor(public cart: CartInterface = defaultCart) {}
+    constructor(public cart: CartInterface = defaultCart) {}
 }

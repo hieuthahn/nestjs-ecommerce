@@ -1,17 +1,21 @@
 import { CategoryDocument } from "src/categories/schemas/category.schema";
-import { Product, ProductDocument } from "src/products/schemas/product.schema";
+import { PostDocument } from "src/posts/schemas/post.schema";
+import {
+    Image,
+    Product,
+    ProductDocument,
+} from "src/products/schemas/product.schema";
 
 export interface ShippingDetails {
     address: string;
     city: string;
-    postalCode: string;
-    country: string;
+    note: string;
 }
 
 export interface OrderItem {
     name: string;
     qty: number;
-    image: string;
+    image: Image[];
     price: number;
     productId: Product;
 }
@@ -26,20 +30,29 @@ export interface PaymentResult {
 export interface CartItem {
     productId: string;
     name: string;
-    image: string;
-    price: number;
+    images: Image[];
+    price: number | string;
     countInStock: number;
     qty: number;
 }
 
 export interface PaginatedProducts {
     products: ProductDocument[];
-    pages: number;
-    page: number;
+    pages?: number;
+    page?: number;
+    pageSize?: number;
 }
 
 export interface PaginatedCategories {
     categories: CategoryDocument[];
+    pages?: number;
+    page?: number;
+    pageSize?: number;
+    total?: number;
+}
+
+export interface PaginatedPosts {
+    posts: PostDocument[];
     pages?: number;
     page?: number;
     pageSize?: number;

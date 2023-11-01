@@ -7,7 +7,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Category, CategoryDocument } from "../schemas/category.schema";
 import { Model, Types } from "mongoose";
 import slugify from "slugify";
-import { DeleteResult } from "mongodb";
+import { DeleteResult, ObjectId } from "mongodb";
 import { PaginatedCategories } from "src/interfaces";
 
 @Injectable()
@@ -34,32 +34,29 @@ export class CategoriesService {
         return createdCategory;
     }
 
-    async findAll(
+    async findMany(
         page?: number,
         pageSize?: number
     ): Promise<PaginatedCategories> {
         const count = await this.categoryModel.countDocuments({});
-        if (page && pageSize) {
-            const categories = await this.categoryModel
-                .find()
-                .populate("parent")
-                .limit(Number(pageSize))
-                .skip(Number(pageSize) * (Number(page) - 1));
-            if (!categories.length)
-                throw new NotFoundException("No categories found");
-            return {
-                categories,
-                page: Number(page),
-                pageSize,
-                pages: Math.ceil(count / Number(pageSize)),
-                total: count,
-            };
-        } else {
-            const categories = await this.categoryModel
-                .find()
-                .populate("parent");
-            return { categories };
-        }
+        const hasPagination = page && pageSize;
+        const categories = hasPagination
+            ? await this.categoryModel
+                  .find()
+                  .limit(Number(pageSize))
+                  .skip(Number(pageSize) * (Number(page) - 1))
+            : await this.categoryModel.find();
+        if (!categories.length)
+            throw new NotFoundException("No categories found");
+        return hasPagination
+            ? {
+                  categories: categories,
+                  page: Number(page),
+                  pageSize,
+                  pages: Math.ceil(count / Number(pageSize)),
+                  total: count,
+              }
+            : { categories };
     }
 
     async findById(id: string): Promise<CategoryDocument> {

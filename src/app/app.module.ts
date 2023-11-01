@@ -12,27 +12,29 @@ import { AppController } from "./controllers/app.controller";
 import { CloudinaryModule } from "../cloudinary/cloudinary.module";
 import { AppService } from "./services/app.service";
 import { CategoriesModule } from "src/categories/categories.module";
+import { PostsModule } from "src/posts/posts.module";
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: [".env"],
-    }),
-    MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: connectDB,
-    }),
-    CommandModule,
-    ProductsModule,
-    CategoriesModule,
-    UsersModule,
-    CartModule,
-    OrderModule,
-    CloudinaryModule,
-    // SeedsModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: [".env"],
+        }),
+        MongooseModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: connectDB,
+        }),
+        CommandModule,
+        ProductsModule,
+        CategoriesModule,
+        UsersModule,
+        CartModule,
+        OrderModule,
+        CloudinaryModule,
+        PostsModule,
+        // SeedsModule,
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}

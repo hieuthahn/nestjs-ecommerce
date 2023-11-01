@@ -1,14 +1,14 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { ProductDocument } from 'src/products/schemas/product.schema';
+import { IsNumber, IsOptional, IsString } from "class-validator";
+import { ProductDocument } from "src/products/schemas/product.schema";
 
 export class AddToCartDto {
-  @IsOptional()
-  product?: ProductDocument;
+    @IsOptional()
+    product?: ProductDocument;
 
-  @IsNumber()
-  qty: number;
+    @IsNumber()
+    qty: number;
 
-  @IsOptional()
-  @IsString()
-  productId?: string;
+    @IsOptional()
+    @IsString()
+    productId?: string;
 }

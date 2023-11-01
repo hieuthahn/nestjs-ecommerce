@@ -22,7 +22,7 @@ export class CategoriesController {
         @Query("page") page: Number,
         @Query("pageSize") pageSize: Number
     ) {
-        return this.categoriesServices.findAll(+page, +pageSize);
+        return this.categoriesServices.findMany(+page, +pageSize);
     }
 
     @Get(":id")
